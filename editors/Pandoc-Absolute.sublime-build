@@ -1,0 +1,25 @@
+{
+    "shell_cmd": "source /Users/marcou/.zshrc && md2docx '$file'",
+    "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+    "working_dir": "${file_path}",
+    "selector": "text.html.markdown",
+    
+    "variants": [
+        {
+            "name": "PDF",
+            "shell_cmd": "source /Users/marcou/.zshrc && md2pdf '$file'"
+        },
+        {
+            "name": "HTML",
+            "shell_cmd": "source /Users/marcou/.zshrc && md2html '$file'"
+        },
+        {
+            "name": "Pages",
+            "shell_cmd": "source /Users/marcou/.zshrc && md2docx '$file' && open -a Pages '${file_path}/${file_base_name}.docx'"
+        },
+        {
+            "name": "All formats",
+            "shell_cmd": "source /Users/marcou/.zshrc && md2all '$file'"
+        }
+    ]
+}
