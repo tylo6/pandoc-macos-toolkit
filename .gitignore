@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Backups
+*.backup
+*.backup-*
+.zshrc.backup-*
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# ZIP archives (déjà sur GitHub)
+*.zip
+
+# Node modules si jamais
+node_modules/
+
+# VS Code settings locaux
+.vscode/settings.json
+
+# Obsidian
+.obsidian/

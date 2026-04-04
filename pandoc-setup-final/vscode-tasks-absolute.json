@@ -1,0 +1,61 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Pandoc: DOCX",
+            "type": "shell",
+            "command": "source /Users/marcou/.zshrc && md2docx '${file}'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pandoc: PDF",
+            "type": "shell",
+            "command": "source /Users/marcou/.zshrc && md2pdf '${file}'",
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pandoc: HTML",
+            "type": "shell",
+            "command": "source /Users/marcou/.zshrc && md2html '${file}'",
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pandoc: Pages",
+            "type": "shell",
+            "command": "source /Users/marcou/.zshrc && md2docx '${file}' && open -a Pages '${fileDirname}/${fileBasenameNoExtension}.docx'",
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pandoc: All formats",
+            "type": "shell",
+            "command": "source /Users/marcou/.zshrc && md2all '${file}'",
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
