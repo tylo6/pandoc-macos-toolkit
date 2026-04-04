@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh repo:*)",
+      "Bash(git -C \"/Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/PDF IA\" remote add origin https://github.com/tylo6/pandoc-macos-toolkit.git)",
+      "Bash(git -C \"/Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/PDF IA\" fetch origin)",
+      "Bash(git -C \"/Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/PDF IA\" branch -a)",
+      "Bash(git -C \"/Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/PDF IA\" log --oneline origin/main)",
+      "Bash(git -C \"/Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/PDF IA\" show origin/main --stat)",
+      "Bash(find '/Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/PDF IA' -name *.html)"
+    ]
+  }
+}
