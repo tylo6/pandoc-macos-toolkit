@@ -3,7 +3,7 @@
 # Required parameters:
 # @raycast.schemaVersion 1
 # @raycast.title Marker → Markdown
-# @raycast.mode silent
+# @raycast.mode fullOutput
 # @raycast.packageName Pandoc
 
 # Optional parameters:
@@ -43,8 +43,12 @@ fi
 # Dossier de sortie = même dossier que le PDF
 OUTPUT_DIR=$(dirname "$FILE")
 
-# Conversion
-"$MARKER" "$FILE" --output_dir "$OUTPUT_DIR" --disable_image_extraction 2>/dev/null
+echo "📄 Fichier  : $(basename "$FILE")"
+echo "📁 Sortie   : $OUTPUT_DIR"
+echo "⏳ Chargement des modèles IA (1-3 min au premier lancement)…"
+
+# Conversion — stderr affiché pour suivre la progression
+"$MARKER" "$FILE" --output_dir "$OUTPUT_DIR" --disable_image_extraction 2>&1
 
 # marker_single crée un sous-dossier portant le nom du fichier
 BASENAME=$(basename "${FILE%.*}")
