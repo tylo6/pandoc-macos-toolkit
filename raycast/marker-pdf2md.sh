@@ -58,18 +58,57 @@ echo "⏳ Chargement des modèles IA (1-3 min au premier lancement)…"
 DURATION=$(( $(date +%s) - START ))
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M")
 
-# Extraire le nombre de pages depuis le _meta.json
+# Rapport qualité depuis le _meta.json
 META="$OUTPUT_DIR/$BASENAME/${BASENAME}_meta.json"
+PAGES="-"
+QUALITY_LINE=""
+
 if [[ -f "$META" ]]; then
-    PAGES=$(python3 -c "import json; d=json.load(open('$META')); print(len(d.get('page_stats', [])))" 2>/dev/null)
-else
-    PAGES="-"
+    QUALITY=$(python3 - "$META" <<'PYEOF'
+import json, sys
+
+with open(sys.argv[1]) as f:
+    d = json.load(f)
+
+stats = d.get('page_stats', [])
+total = len(stats)
+ocr_pages = [s['page_id'] + 1 for s in stats if s.get('text_extraction_method') == 'surya-ocr']
+pdf_pages = total - len(ocr_pages)
+ocr_pct = round(len(ocr_pages) * 100 / total) if total else 0
+
+print(f"PAGES={total}")
+print(f"PDF_PAGES={pdf_pages}")
+print(f"OCR_PAGES={len(ocr_pages)}")
+print(f"OCR_PCT={ocr_pct}")
+print(f"OCR_LIST={','.join(str(p) for p in ocr_pages[:10])}")
+PYEOF
+)
+    # Récupérer les variables
+    PAGES=$(echo "$QUALITY" | grep PAGES= | head -1 | cut -d= -f2)
+    PDF_PAGES=$(echo "$QUALITY" | grep PDF_PAGES= | cut -d= -f2)
+    OCR_PAGES=$(echo "$QUALITY" | grep OCR_PAGES= | cut -d= -f2)
+    OCR_PCT=$(echo "$QUALITY" | grep OCR_PCT= | cut -d= -f2)
+    OCR_LIST=$(echo "$QUALITY" | grep OCR_LIST= | cut -d= -f2)
+
+    echo ""
+    echo "📊 Rapport qualité :"
+    echo "   Pages totales    : ${PAGES}p"
+    printf "   pdftext (fiable) : %sp (%s%%)\n" "$PDF_PAGES" "$(( 100 - OCR_PCT ))"
+    if [[ "$OCR_PAGES" -gt 0 ]]; then
+        printf "   surya-ocr        : %sp (%s%%)  ← pages %s\n" "$OCR_PAGES" "$OCR_PCT" "$OCR_LIST"
+        echo "   ⚠️  Vérifier manuellement les termes techniques sur ces pages"
+        QUALITY_LINE="OCR:${OCR_PAGES}p(${OCR_PCT}%)"
+    else
+        echo "   ✅ 100% pdftext — extraction directe, termes fiables"
+        QUALITY_LINE="pdftext:100%"
+    fi
 fi
 
 if [[ -f "$RESULT" ]]; then
-    echo "✅ Converti : $RESULT (${DURATION}s, ${PAGES}p)"
-    printf "%s | OK   | %4ds | %3sp | %s\n" "$TIMESTAMP" "$DURATION" "$PAGES" "$(basename "$FILE")" >> "$LOG"
+    echo ""
+    echo "✅ Converti : $RESULT (${DURATION}s)"
+    printf "%s | OK   | %4ds | %3sp | %-20s | %s\n" "$TIMESTAMP" "$DURATION" "$PAGES" "$QUALITY_LINE" "$(basename "$FILE")" >> "$LOG"
 else
     echo "⚠️  Conversion terminée — vérifier : $OUTPUT_DIR/$BASENAME/"
-    printf "%s | WARN | %4ds | %3sp | %s\n" "$TIMESTAMP" "$DURATION" "$PAGES" "$(basename "$FILE")" >> "$LOG"
+    printf "%s | WARN | %4ds | %3sp | %-20s | %s\n" "$TIMESTAMP" "$DURATION" "$PAGES" "$QUALITY_LINE" "$(basename "$FILE")" >> "$LOG"
 fi
