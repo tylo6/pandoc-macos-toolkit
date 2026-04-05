@@ -17,6 +17,7 @@
 
 VENV="/Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/.venv-marker"
 MARKER="$VENV/bin/marker_single"
+LOG="$HOME/.marker_history.log"
 
 # Récupérer le fichier
 if [[ -n "$1" ]]; then
@@ -43,6 +44,10 @@ fi
 # Dossier de sortie = même dossier que le PDF
 OUTPUT_DIR=$(dirname "$FILE")
 
+BASENAME=$(basename "${FILE%.*}")
+RESULT="$OUTPUT_DIR/$BASENAME/$BASENAME.md"
+START=$(date +%s)
+
 echo "📄 Fichier  : $(basename "$FILE")"
 echo "📁 Sortie   : $OUTPUT_DIR"
 echo "⏳ Chargement des modèles IA (1-3 min au premier lancement)…"
@@ -50,12 +55,21 @@ echo "⏳ Chargement des modèles IA (1-3 min au premier lancement)…"
 # Conversion — stderr affiché pour suivre la progression
 "$MARKER" "$FILE" --output_dir "$OUTPUT_DIR" --disable_image_extraction 2>&1
 
-# marker_single crée un sous-dossier portant le nom du fichier
-BASENAME=$(basename "${FILE%.*}")
-RESULT="$OUTPUT_DIR/$BASENAME/$BASENAME.md"
+DURATION=$(( $(date +%s) - START ))
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M")
+
+# Extraire le nombre de pages depuis le _meta.json
+META="$OUTPUT_DIR/$BASENAME/${BASENAME}_meta.json"
+if [[ -f "$META" ]]; then
+    PAGES=$(python3 -c "import json; d=json.load(open('$META')); print(len(d.get('page_stats', [])))" 2>/dev/null)
+else
+    PAGES="-"
+fi
 
 if [[ -f "$RESULT" ]]; then
-    echo "✅ Converti : $RESULT"
+    echo "✅ Converti : $RESULT (${DURATION}s, ${PAGES}p)"
+    printf "%s | OK   | %4ds | %3sp | %s\n" "$TIMESTAMP" "$DURATION" "$PAGES" "$(basename "$FILE")" >> "$LOG"
 else
     echo "⚠️  Conversion terminée — vérifier : $OUTPUT_DIR/$BASENAME/"
+    printf "%s | WARN | %4ds | %3sp | %s\n" "$TIMESTAMP" "$DURATION" "$PAGES" "$(basename "$FILE")" >> "$LOG"
 fi
