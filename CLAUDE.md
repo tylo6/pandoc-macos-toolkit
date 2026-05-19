@@ -53,7 +53,7 @@ pandoc-macos-toolkit/
 - **Jamais de suppression des fichiers source**
 - Dossier de sortie = même dossier que le fichier source (cohérence avec PDFtoMD.sh)
 
-## Feuille de route
+## Brief projet
 
 ### Ordre de développement
 
@@ -71,7 +71,18 @@ pandoc-macos-toolkit/
 - **Batch** : deux modes — `--fast` (DOCX+PPTX via pandoc) et `--ai` (PDF via marker, plus lent)
 - **Branche de dev** : `feat/new-converters` — merge sur `main` après validation des 3 scripts
 
-## Questions ouvertes
+### Questions ouvertes
 
 - Nommage du dossier de sortie batch : sous-dossier par type (`md/`) ou côte à côte avec les sources ?
 - Gestion des fichiers protégés par mot de passe (DOCX/PDF) : skip silencieux ou erreur visible ?
+
+## Skills à utiliser sur ce projet
+
+| Tâche | Skill à déclencher |
+|---|---|
+| Nouveau script zsh (Raycast) | `code-review` — relire avant merge |
+| Script Python batch | `python-refactor-lean` — épurer après première version |
+| Script Python batch | `python-testing` — écrire tests de non-régression |
+| Fonctions Python batch | `python-docstring` — documenter les fonctions |
+| Messages de commit | `commit-conventions` — format Conventional Commits |
+| README / doc utilisateur | `user-documentation` — mise à jour après chaque script |
