@@ -79,21 +79,23 @@ Le fichier converti hérite du nom source : `Ant042_SSP_diagnostic-pollution-chl
 
 | Priorité | Script | Statut |
 |---|---|---|
-| 1 | `raycast/PPTtoMD.sh` — PPTX → MD via pandoc | ⬜ À faire |
-| 2 | `raycast/DOCXtoMD.sh` — DOCX → MD via pandoc | ⬜ À faire |
-| 3 | `batch/convert_batch.py` — batch multi-format | ⬜ À faire |
+| ✅ | `raycast/PPTtoMD.sh` — PPTX → MD via pandoc | ✅ Validé |
+| ✅ | `raycast/DOCXtoMD.sh` — DOCX → MD via pandoc | ✅ Validé |
+| ✅ | `batch/convert_batch.py` — batch multi-format | ✅ Validé |
 | ✅ | `raycast/PDFtoMD.sh` — PDF → MD via marker-pdf | ✅ Validé |
+| 4 | `raycast/PDFtoMD.sh` — révision script PDF (batch mode) | ⬜ À faire |
 
 ### Notes de conception
 
-- **PPTtoMD** : pandoc extrait titres + corps texte des slides ; les images sont perdues (comportement attendu et documenté)
-- **DOCXtoMD** : pandoc natif, très fiable ; options `--wrap=none --extract-media` à évaluer
-- **Batch** : deux modes — `--fast` (DOCX+PPTX via pandoc) et `--ai` (PDF via marker, plus lent)
-- **Branche de dev** : `feat/new-converters` — merge sur `main` après validation des 3 scripts
+- **PPTtoMD** : pandoc extrait titres + corps texte des slides ; images perdues (comportement attendu)
+- **DOCXtoMD** : pandoc `-t plain --wrap=none` + post-traitement Python (aplatissement tableaux Word)
+- **Batch** : modes `--fast` (DOCX+PPTX, 4 workers), `--ai` (PDF via marker, 1-2 workers recommandés), `--all`
+  - Fallback `.ppt` (vieux format binaire) via LibreOffice → pptx → pandoc
+  - Manifest CSV reprise : `batch/conversion_log.csv` — jamais retraiter un OK
+- **Branche de dev** : `feat/new-converters` — merge sur `main` après livraison script PDF révisé
 
 ### Questions ouvertes
 
-- Nommage du dossier de sortie batch : sous-dossier par type (`md/`) ou côte à côte avec les sources ?
 - Gestion des fichiers protégés par mot de passe (DOCX/PDF) : skip silencieux ou erreur visible ?
 
 ## Skills à utiliser sur ce projet
