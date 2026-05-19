@@ -335,6 +335,12 @@ def main() -> None:
 
   dispatch = make_dispatch(output_dir)
   ok = fail = 0
+  durations: list[int] = []
+  errors: list[str] = []
+  start_batch = datetime.now()
+  # Résumé périodique toutes les N lignes (utile pour les longs batches PDF)
+  summary_every = 50 if args.mode == 'ai' else 200
+
   with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
     futures = {pool.submit(dispatch[f.suffix.lower()], f): f for f in files}
     for i, future in enumerate(concurrent.futures.as_completed(futures), 1):
@@ -343,18 +349,46 @@ def main() -> None:
         row = future.result()
       except Exception as exc:
         row = make_row(filepath.name, 'FAIL', 0, '-', '?', '')
-        print(f"[{i}/{total}] ❌ EXCEPTION {filepath.name} : {exc}", file=sys.stderr)
+        errors.append(f"{filepath.name} — exception : {exc}")
       append_log(row)
-      icon = '✅' if row['status'] == 'OK' else '❌'
-      print(f"[{i}/{total}] {icon} {row['filename']}  ({row['duration']}s, {row['count']})")
+
       if row['status'] == 'OK':
         ok += 1
+        durations.append(row['duration'])
       else:
         fail += 1
+        if row['status'] == 'FAIL':
+          errors.append(f"{row['filename']} ({row['engine']})")
 
+      # Calcul ETA
+      remaining = total - i
+      if durations:
+        avg = sum(durations) / len(durations)
+        eta_s = int(avg * remaining / args.workers)
+        eta_str = f"  ETA ~{eta_s // 60}m{eta_s % 60:02d}s" if eta_s > 10 else ""
+      else:
+        eta_str = ""
+
+      icon = '✅' if row['status'] == 'OK' else '❌'
+      print(f"[{i}/{total}] {icon} {row['filename']}  ({row['duration']}s, {row['count']}){eta_str}")
+
+      # Résumé périodique
+      if i % summary_every == 0:
+        elapsed = int((datetime.now() - start_batch).total_seconds())
+        print(f"\n  ── Bilan {i}/{total} ── OK={ok}  FAIL={fail}  Restants={remaining}"
+              f"  Temps écoulé={elapsed // 60}m{elapsed % 60:02d}s{eta_str}")
+        if errors:
+          print(f"  Erreurs récentes : {', '.join(errors[-3:])}")
+        print()
+
+  elapsed_total = int((datetime.now() - start_batch).total_seconds())
   print(f"\n{'─' * 52}")
-  print(f"Terminé  OK={ok}  FAIL={fail}  Total={total}")
-  print(f"Log      {LOG_CSV}")
+  print(f"Terminé  OK={ok}  FAIL={fail}  Total={total}  Durée={elapsed_total // 60}m{elapsed_total % 60:02d}s")
+  if errors:
+    print(f"\nFichiers en erreur ({len(errors)}) :")
+    for e in errors:
+      print(f"  ❌ {e}")
+  print(f"\nLog  {LOG_CSV}")
 
 
 if __name__ == '__main__':

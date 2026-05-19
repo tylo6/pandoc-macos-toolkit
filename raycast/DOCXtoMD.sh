@@ -62,15 +62,10 @@ if ! command -v pandoc &>/dev/null; then
   exit 1
 fi
 
-OUTPUT_DIR="/Volumes/Andromede/fiches_de_cas_antea/markdown"
+OUTPUT_DIR=$(dirname "$FILE")
 BASENAME=$(basename "${FILE%.*}")
 RESULT="$OUTPUT_DIR/${BASENAME}.md"
 START=$(date +%s)
-
-if [[ ! -d "$OUTPUT_DIR" ]]; then
-  echo "❌ Dossier de sortie introuvable — volume Andromede monté ?"
-  exit 1
-fi
 
 echo "📝 Fichier  : $(basename "$FILE")"
 echo "📁 Sortie   : $OUTPUT_DIR"
