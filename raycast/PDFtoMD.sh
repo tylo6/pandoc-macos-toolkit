@@ -2,7 +2,7 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Marker → Markdown
+# @raycast.title PDF to MD
 # @raycast.mode fullOutput
 # @raycast.packageName Pandoc
 
@@ -11,7 +11,7 @@
 # @raycast.argument1 { "type": "text", "placeholder": "Fichier .pdf (ou sélection Finder)", "optional": true }
 
 # Documentation:
-# @raycast.description Convertir un PDF en Markdown via marker-pdf (IA)
+# @raycast.description Convertir un PDF en Markdown via marker-pdf (IA — extraction pdftext + OCR surya)
 # @raycast.author Marcou
 # @raycast.authorURL https://github.com/marcou
 
