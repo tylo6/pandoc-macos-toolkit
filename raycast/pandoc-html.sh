@@ -15,6 +15,23 @@
 # @raycast.author Marcou
 # @raycast.authorURL https://github.com/marcou
 
+# =============================================================================
+# BRIEF
+# Projet  : pandoc-macos-toolkit
+# Script  : pandoc-html — conversion fichier unique MD → HTML autonome
+# Moteur  : pandoc --self-contained (md2html si disponible, sinon pandoc direct)
+# Source  : fichier .md sélectionné dans Finder ou passé en argument
+# Sortie  : même dossier que la source — <nom>.html
+# Log     : aucun (mode silent Raycast)
+# Statut  : validé (script existant)
+# Export  : ./pandoc-html.sh --brief > pandoc-html-brief.md
+# =============================================================================
+
+if [[ "$1" == "--brief" ]]; then
+  awk '/^# BRIEF/{f=1} f && /^# ==========/{exit} f{sub(/^# ?/,""); print}' "$0"
+  exit 0
+fi
+
 # Source zsh pour charger les fonctions
 source "$HOME/.zshrc"
 

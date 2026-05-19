@@ -45,6 +45,26 @@ pandoc-macos-toolkit/
 - Commentaires en français, noms de variables en anglais
 - Commits atomiques en français (convention Conventional Commits)
 
+## Convention de nommage des fichiers
+
+Les fichiers convertis **héritent du nom source sans modification**. La convention s'applique donc en amont, au nommage des fichiers sources avant conversion.
+
+Structure imposée aux sources :
+```
+{ID}_{DOMAINE}_{description}_{type}_{réf}_{année}.ext
+```
+
+Règles de casse :
+- `{ID}` → première lettre **Majuscule** (ex: `Ant042`, `4100`)
+- `{DOMAINE}` → **TOUT EN MAJUSCULES** (ex: `SSP`, `EAU`, `INFRA`)
+- `{description}_{type}_{réf}_{année}` → **tout en minuscules**
+- Séparateur : `_` (underscore) — compatible IA, bases de données, URLs
+- Pas d'espaces, pas d'accents, pas de caractères spéciaux
+
+Exemple : `Ant042_SSP_diagnostic-pollution-chlore_fiche_ref2024_2023.pptx`
+
+Le fichier converti hérite du nom source : `Ant042_SSP_diagnostic-pollution-chlore_fiche_ref2024_2023.md`
+
 ## Règles batch
 
 - Throttle max : **4 jobs parallèles** pour préserver la réactivité machine

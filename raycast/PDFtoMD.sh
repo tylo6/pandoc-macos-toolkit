@@ -15,6 +15,24 @@
 # @raycast.author Marcou
 # @raycast.authorURL https://github.com/marcou
 
+# =============================================================================
+# BRIEF
+# Projet  : pandoc-macos-toolkit
+# Script  : PDFtoMD — conversion fichier unique PDF → Markdown
+# Moteur  : marker-pdf (pdftext natif + OCR surya pour pages scannées)
+# Source  : fichier .pdf sélectionné dans Finder ou passé en argument
+# Sortie  : même dossier que la source — <nom>/<nom>.md
+# Log     : ~/.marker_history.log (format pipe-separated)
+# Venv    : /Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/.venv-marker
+# Statut  : validé (script existant)
+# Export  : ./PDFtoMD.sh --brief > PDFtoMD-brief.md
+# =============================================================================
+
+if [[ "$1" == "--brief" ]]; then
+  awk '/^# BRIEF/{f=1} f && /^# ==========/{exit} f{sub(/^# ?/,""); print}' "$0"
+  exit 0
+fi
+
 VENV="/Users/marcou/Documents/Obsidian Vault/03-PROJETS/Dev/.venv-marker"
 MARKER="$VENV/bin/marker_single"
 LOG="$HOME/.marker_history.log"
